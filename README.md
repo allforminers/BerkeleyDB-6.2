@@ -34,3 +34,65 @@ cd $BITCOIN_ROOT
 
 
 -----
+
+PATH=$(echo "$PATH" | sed -e 's/:\/mnt.*//g')
+
+cd depends
+
+make -j8 HOST=x86_64-pc-linux-gnu
+
+
+-----
+
+
+git clean -dxf
+make clean
+chmod 777 ./autogen.sh
+chmod 777 ./configure
+chmod 777 ./share/genbuild.sh
+chmod 777 ./src/secp256k1/autogen.sh
+chmod 777 ./src/leveldb/build_detect_platform
+./autogen.sh
+./configure --disable-tests --disable-bench --without-gui
+make -j8
+
+
+-----
+
+NEW DASH COMpiled
+
+sudo -s
+
+apt-get update
+
+apt-get install -y curl build-essential libtool autotools-dev automake pkg-config python3 bsdmainutils cmake
+
+wget https://github.com/codablock/bls-signatures/archive/v20181101.zip
+
+unzip v20181101.zip
+
+cd bls-signatures-20181101
+
+cmake .
+
+make -j30 install
+
+cd ..
+
+git clone https://github.com/dashpay/dash
+
+cd dash/depends
+
+make -j30
+
+cd ..
+
+./autogen.sh
+
+./configure --with-gui=no --disable-tests --disable-bench --prefix=$(pwd)/depends/x86_64-pc-linux-gnu
+
+make -j30
+
+make -j8
+
+-----
